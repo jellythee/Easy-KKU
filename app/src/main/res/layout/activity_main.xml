@@ -19,30 +19,38 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"></LinearLayout>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/button"
-        android:text="SIGN UP"
-        android:elevation="0dp"
-        android:layout_marginRight="31dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginBottom="17dp"
+        android:weightSum="1"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@+id/button2"
-        android:layout_toStartOf="@+id/button2" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
-    <Button
-        android:text="@string/SignUp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/button2"
-        android:layout_marginRight="50dp"
-        android:layout_marginEnd="50dp"
-        android:layout_alignBaseline="@+id/button"
-        android:layout_alignBottom="@+id/button"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        <Button
+            android:text="@string/SignUp"
+            android:layout_width="wrap_content"
+            android:layout_height="61dp"
+            android:id="@+id/button2"
+            android:layout_marginRight="50dp"
+            android:layout_marginEnd="50dp"
+            android:layout_alignBaseline="@+id/button"
+            android:layout_alignBottom="@+id/button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_weight="0.59" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="59dp"
+            android:id="@+id/button"
+            android:text="SIGN UP"
+            android:elevation="0dp"
+            android:layout_marginRight="31dp"
+            android:layout_marginEnd="31dp"
+            android:layout_marginBottom="17dp"
+            android:layout_alignParentBottom="true"
+            android:layout_toLeftOf="@+id/button2"
+            android:layout_toStartOf="@+id/button2"
+            android:layout_weight="0.22" />
+
+    </LinearLayout>
+
 </RelativeLayout>
