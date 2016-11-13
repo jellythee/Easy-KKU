@@ -1,24 +1,32 @@
 package kku.theechaya.easykku;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.StrictMode;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import org.jibble.simpleftp.SimpleFTP;
 
 import java.io.File;
-
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -31,7 +39,8 @@ public class SignUpActivity extends AppCompatActivity {
             imagePathString, imageNameString;
     private Uri uri;
     private boolean aBoolean = true;
-
+    private String urlAddUser = "http://swiftcodingthai.com/kku/add_user_jelly.php";
+    private String urlImage = "http://swiftcodingthai.com/kku/Image";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +48,10 @@ public class SignUpActivity extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         //Bind Widget
-        nameEditText = (EditText) findViewById(R.id.editText);
-        phoneEditText = (EditText) findViewById(R.id.editText2);
-        userEditText = (EditText) findViewById(R.id.editText3);
-        passwordEditText = (EditText) findViewById(R.id.editText4);
+        nameEditText = (EditText) findViewById(R.id.editText4);
+        phoneEditText = (EditText) findViewById(R.id.editText3);
+        userEditText = (EditText) findViewById(R.id.editText2);
+        passwordEditText = (EditText) findViewById(R.id.editText);
         imageView = (ImageView) findViewById(R.id.imageView);
         button = (Button) findViewById(R.id.button3);
 
@@ -74,6 +83,7 @@ public class SignUpActivity extends AppCompatActivity {
                 } else {
                     //Choose Image OK
                     upLoadImageToServer();
+                    upLoadStringToServer();
 
                 }
 
@@ -97,26 +107,92 @@ public class SignUpActivity extends AppCompatActivity {
 
     }   // Main Method
 
+    private void upLoadStringToServer() {
+
+        AddNewUser addNewUser = new AddNewUser(SignUpActivity.this);
+        addNewUser.execute(urlAddUser);
+
+
+    }   // upLoad
+
+    //Create Inner Class
+    private class AddNewUser extends AsyncTask<String, Void, String> {
+
+        //Explicit
+        private Context context;
+
+        public AddNewUser(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+
+            try {
+
+                OkHttpClient okHttpClient = new OkHttpClient();
+                RequestBody requestBody = new FormEncodingBuilder()
+                        .add("isAdd", "true")
+                        .add("Name", nameString)
+                        .add("Phone", phoneString)
+                        .add("User", userString)
+                        .add("Password", passwordString)
+                        .add("Image", urlImage + imageNameString)
+                        .build();
+                Request.Builder builder = new Request.Builder();
+                Request request = builder.url(strings[0]).post(requestBody).build();
+                Response response = okHttpClient.newCall(request).execute();
+                return response.body().string();
+
+
+            } catch (Exception e) {
+                Log.d("13novV1", "e doIn ==> " + e.toString());
+                return null;
+            }
+
+        }   // doInBack
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            Log.d("13novV1", "Result ==> " + s);
+
+            if (Boolean.parseBoolean(s)){
+                Toast.makeText(context, "Upload Success", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(context, "Upload Flase", Toast.LENGTH_SHORT).show();
+            }
+
+        }   // onPost
+
+    }   // AddNewUser Class
+
+
     private void upLoadImageToServer() {
 
+        //Change Policy
         StrictMode.ThreadPolicy threadPolicy = new StrictMode.ThreadPolicy
                 .Builder().permitAll().build();
         StrictMode.setThreadPolicy(threadPolicy);
 
         try {
+
             SimpleFTP simpleFTP = new SimpleFTP();
-            SimpleFTP.connect("ftp.swiftcodingthai.com", 21,
+            simpleFTP.connect("ftp.swiftcodingthai.com", 21,
                     "kku@swiftcodingthai.com", "Abc12345");
             simpleFTP.bin();
             simpleFTP.cwd("Image");
             simpleFTP.stor(new File(imagePathString));
             simpleFTP.disconnect();
 
-        }catch (Exception e){
-            Log.d("12novV1", "e simpleFTP ==> + imagePathString");
-
+        } catch (Exception e) {
+            Log.d("12novV1", "e simpleFTP ==> " + e.toString());
         }
-    }
+
+
+
+    }   // upLoad
 
     @Override
     protected void onActivityResult(int requestCode,
